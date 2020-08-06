@@ -51,7 +51,7 @@ Are you willing to contribute to this project? You can contribute in many areas 
 
 ### Endpoint Documentation
 
-All responses must follow the format specified in the online [documentation](https://auth-service.herokuapp.com/). This should be your first go to as this will be the live server with the most trustworthy documentation.
+All responses must follow the format specified in the online [documentation](https://auth-service.herokuapp.com). This should be your first go to as this will be the live server with the most trustworthy documentation.
 
 ### Before Submitting Pull Request
 
