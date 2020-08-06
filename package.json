@@ -1,0 +1,31 @@
+{
+  "name": "authservice",
+  "version": "1.0.0",
+  "description": "An authentication microservice integrating with Gatepass platform",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neymarjimoh/auth-service.git"
+  },
+  "keywords": [
+    "authentication",
+    "microservice",
+    "node",
+    "express",
+    "mongodb",
+    "docker"
+  ],
+  "author": "Odutoye Kolade, Jimoh Rildwan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/neymarjimoh/auth-service/issues"
+  },
+  "homepage": "https://github.com/neymarjimoh/auth-service#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.9.27"
+  }
+}
