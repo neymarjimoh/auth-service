@@ -40,6 +40,19 @@ const signUpValidationRules = () => {
 	];
 };
 
+const signInValidationRules = () => {
+	return [
+		body("email")
+			.isEmail()
+			.withMessage("Enter a valid email"),
+		body("password")
+			.notEmpty()
+			.isLength({ min: 6 })
+			.withMessage("Password must contain at least 6 characters"),
+
+	];
+};
+
 const validateError = (req, res, next) => {
 	const errors = validationResult(req);
 	if (errors.isEmpty()) {
@@ -55,5 +68,6 @@ const validateError = (req, res, next) => {
 
 module.exports = {
 	signUpValidationRules,
+	signInValidationRules,
 	validateError,
 };

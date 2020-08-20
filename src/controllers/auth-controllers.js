@@ -48,7 +48,6 @@ exports.verifyUser = async (req, res, next) => {
 
 		if (!user) {
 			const err = new ErrorHelper(401, "fail", "Invalid registration link!");
-
 			return next(err, req, res, next);
 		}
 
@@ -88,6 +87,63 @@ exports.verifyUser = async (req, res, next) => {
 		});
 	} catch (error) {
 		console.log(`Error from user verification >>> ${error.message}`);
+		return next(error);
+	}
+};
+
+exports.loginUser = async (req, res, next) => {
+	const { email, password } = req.body;
+	const { app_name } = req.app;
+	let err;
+	try {
+		const user = await User.findOne({ email, app_name });
+		if (!user) {
+			err = new ErrorHelper(
+				404, 
+				"fail", 
+				"You Entered an incorrect Email or Password"
+			);
+			return next(err, req, res, next);
+		}
+
+		if (!user.verified) {
+			err = new ErrorHelper(
+				401, 
+				"fail", 
+				"You have to verify your account"
+			);
+			return next(err, req, res, next);
+		}
+
+		const passwordValid = comparePassword(password, user.password);
+		if (!passwordValid) {
+			err = new ErrorHelper(
+				401, 
+				"fail", 
+				"You Entered an incorrect Email or Password"
+			);
+			return next(err, req, res, next);
+		}
+
+		if (user.status == "disabled") {
+			err = new ErrorHelper(
+				401, 
+				"fail", 
+				"This account has been disabled due to certain reasons. Contact the admins for more information."
+			);
+			return next(err, req, res, next);
+		}
+		await User.findByIdAndUpdate(
+			user._id,
+			{ $set: { last_login: new Date().toDateString() } } 
+		);
+		const token = generateToken({ userId: user._id }, "1d");
+		return res.status(200).json({
+			message: `You have successfully logged in on ${app_name}..`,
+			token,
+		});
+	} catch (error) {
+		console.log(`Error from user login >>> ${error.message}`);
 		return next(error);
 	}
 };

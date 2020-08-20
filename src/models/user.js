@@ -41,7 +41,7 @@ const userSchema = new Schema(
 			default: Date.now(),
 		},
 		last_login: {
-			type: Date,
+			type: String,
 		},
 		department: {
 			type: String,
