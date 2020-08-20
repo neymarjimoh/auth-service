@@ -135,7 +135,7 @@ exports.loginUser = async (req, res, next) => {
 		}
 		await User.findByIdAndUpdate(
 			user._id,
-			{ $set: { last_login: new Date() } } 
+			{ $set: { last_login: new Date().toDateString() } } 
 		);
 		const token = generateToken({ userId: user._id }, "1d");
 		return res.status(200).json({
