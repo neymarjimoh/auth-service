@@ -11,6 +11,10 @@ const userSchema = new Schema(
 			type: String,
 			required: true,
 		},
+		organisation_name: {
+			type: String,
+			required: true,
+		},
 		fullname: {
 			type: String,
 			required: true,

@@ -23,6 +23,7 @@ exports.registerUser = async (req, res, next) => {
 			password: hashedPassword,
 			unique_id: app.unique_id,
 			app_name: app.app_name,
+			organisation_name: app.org_name,
 			department,
 		});
 

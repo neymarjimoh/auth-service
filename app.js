@@ -6,9 +6,9 @@ const cors = require("cors");
 const dbConnect = require("./src/config/db");
 const globalErrHandler = require("./src/controllers/errorController");
 const ErrorHelper = require("./src/helpers/errorHelper");
-const { checkAuth } = require("./src/middlewares/checkToken");
+const { checkAuth, gatepassAuth } = require("./src/middlewares/checkToken");
 
-const { authRouter } = require("./src/routes/");
+const { authRouter, requestRouter } = require("./src/routes/");
 
 // const isProduction = process.env.NODE_ENV === "production";
 
@@ -23,6 +23,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
 app.use(checkAuth);
+app.use(gatepassAuth);
 
 app.get("/", (req, res) => {
 	res.status(200).json({
@@ -31,6 +32,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/", requestRouter);
 
 // // catch 404 and forward to error handler
 // app.use((req, res, next) => {

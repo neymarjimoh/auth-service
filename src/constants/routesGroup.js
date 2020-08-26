@@ -6,5 +6,8 @@ module.exports = {
 		"/api/v1/auth/forgot-password",
 		"/api/v1/auth/password-reset",
 	],
-	gatepassRoutes: [""],
+	gatepassRoutes: [
+		"/api/v1/:orgname/:appname/users",
+		"/api/v1/1/:appname/users",
+	],
 };
