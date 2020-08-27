@@ -32,12 +32,23 @@ const checkAuth = async (req, res, next) => {
 			req.app = response.data.app;
 			return next();
 		} catch (error) {
+			let err;
 			console.log(
 				"Error from application authentication >>>>> ",
 				error.message
 			);
+
+			if (error.response) {
+				err = new ErrorHelper(
+					error.response.status,
+					"fail",
+					error.response.data
+				);
+				next(err);
+			}
+
 			if (error.name === "TokenExpiredError") {
-				const err = new ErrorHelper(401, "fail", "Token has expired");
+				err = new ErrorHelper(403, "fail", "Token has expired");
 				next(err);
 			}
 			return next(error);
@@ -55,7 +66,6 @@ const gatepassAuth = async (req, res, next) => {
 	) {
 		try {
 			if (!req.headers["gatepass-token"]) {
-				console.log(req.path);
 				return res.status(412).json({
 					message: "Access denied!! Missing authorization credentials",
 				});
@@ -81,9 +91,20 @@ const gatepassAuth = async (req, res, next) => {
 			req.org = response.data.organisation;
 			return next();
 		} catch (error) {
+			let err;
 			console.log("Error from user authentication >>>>> ", error.message);
+
+			if (error.response) {
+				err = new ErrorHelper(
+					error.response.status,
+					"fail",
+					error.response.data
+				);
+				next(err);
+			}
+
 			if (error.name === "TokenExpiredError") {
-				const err = new ErrorHelper(401, "fail", "Token has expired");
+				err = new ErrorHelper(403, "fail", "Token has expired");
 				next(err);
 			}
 			return next(error);
