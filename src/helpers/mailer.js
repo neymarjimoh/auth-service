@@ -52,6 +52,35 @@ const sendActivationMail = async (data, req) => {
 	return;
 };
 
+const passwordResetMail = async (data, req) => {
+	const userEmail = data.email;
+	const userName = data.fullname;
+	const { app_name } = req.app;
+	const resetToken = jwt.sign({ userId: data._id }, EMAIL_SECRET, {
+		expiresIn: "1d",
+	});
+
+	const generateLink = `http:\/\/${req.headers.host}\/api\/v1\/auth\/password-reset?token=${resetToken}`;
+
+	const msg = {
+		from: EMAIL_ADDRESS,
+		to: userEmail,
+		subject: "Password Reset Request",
+		text: "testing text",
+		template: "passwordReset",
+		context: {
+			name: userName,
+			resetLink: generateLink,
+			appName: app_name,
+		},
+	};
+
+	let info = await transport.sendMail(msg);
+	console.log(`mail sent succcessfully >>> ${info.messageId}`);
+	return;
+};
+
 module.exports = {
 	sendActivationMail,
+	passwordResetMail,
 };
