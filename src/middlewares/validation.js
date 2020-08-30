@@ -60,6 +60,22 @@ const PasswordResetValidationRules = () => {
 	];
 };
 
+const changePasswordValRules = () => {
+	return [
+		body("oldPassword").notEmpty().withMessage("Old password field required"),
+		body("newPassword")
+			.notEmpty()
+			.withMessage("A new password is required")
+			.isLength({ min: 6 })
+			.withMessage("Password must be at least 6 characters long")
+			.custom((value, { req }) => value !== req.body.oldPassword)
+			.withMessage("Ensure you enter a new password"),
+		body("confirmPassword", "passwords do not match")
+			.exists()
+			.custom((val, { req }) => val === req.body.newPassword),
+	]
+};
+
 const validateError = (req, res, next) => {
 	const errors = validationResult(req);
 	if (errors.isEmpty()) {
@@ -77,5 +93,6 @@ module.exports = {
 	signUpValidationRules,
 	signInValidationRules,
 	PasswordResetValidationRules,
+	changePasswordValRules,
 	validateError,
 };

@@ -6,6 +6,7 @@ module.exports = {
 		"/api/v1/auth/forgot-password",
 		"/api/v1/auth/password-reset",
 	],
+	appSecureRoutes: ["/api/v1/auth/change-password"],
 	gatepassRoutes: [
 		"/api/v1/:orgname/:appname/users",
 		"/api/v1/1/:appname/users",
