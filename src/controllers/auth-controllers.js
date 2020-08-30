@@ -133,7 +133,7 @@ exports.loginUser = async (req, res, next) => {
 		await User.findByIdAndUpdate(user._id, {
 			$set: { last_login: new Date().toDateString() },
 		});
-		const token = generateToken({ userId: user._id }, "1d");
+		const token = generateToken({ userId: user._id, app_name: user.app_name }, "1d");
 		return res.status(200).json({
 			message: `You have successfully logged in on ${app_name}..`,
 			token,
@@ -214,6 +214,44 @@ exports.resetPassword = async (req, res, next) => {
 		});
 	} catch (error) {
 		console.log(`Error from user reset password >>> ${error.message}`);
+		return next(error);
+	}
+};
+
+exports.changePassword = async (req, res, next) => {
+	const { password, _id } = req.user;
+	const { oldPassword, newPassword, confirmPassword } = req.body;
+	let err;
+	try {
+		const passwordValid = comparePassword(oldPassword, password);
+		if (!passwordValid) {
+			err = new ErrorHelper(
+				401,
+				"fail",
+				"You Entered an incorrect Email or Password"
+			);
+			return next(err, req, res, next);
+		}
+		const hashedPassword = hashPassword(newPassword);
+
+		const updatePassword = await User.findOneAndUpdate(
+			{ _id },
+			{
+				$set: {
+					password: hashedPassword,
+				},
+			}
+		);
+
+		if (!updatePassword) {
+			err = new ErrorHelper(404, "fail", "Invalid user");
+			return next(err, req, res, next);
+		}
+		return res.status(200).json({
+			message: "Your password updated successfully",
+		});
+	} catch (error) {
+		console.log(red(`Error from user change password >>> ${error.message}`));
 		return next(error);
 	}
 };

@@ -6,12 +6,14 @@ const {
 	loginUser,
 	forgotPassword,
 	resetPassword,
+	changePassword,
 } = require("../controllers/auth-controllers");
 
 const {
 	signUpValidationRules,
 	signInValidationRules,
 	PasswordResetValidationRules,
+	changePasswordValRules,
 	validateError,
 } = require("../middlewares/validation");
 
@@ -27,6 +29,12 @@ router.patch(
 	PasswordResetValidationRules(),
 	validateError,
 	resetPassword
+);
+router.post(
+	"/change-password",
+	changePasswordValRules(),
+	validateError,
+	changePassword
 );
 
 module.exports = router;

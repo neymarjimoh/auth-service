@@ -6,7 +6,7 @@ const cors = require("cors");
 const dbConnect = require("./src/config/db");
 const globalErrHandler = require("./src/controllers/errorController");
 const ErrorHelper = require("./src/helpers/errorHelper");
-const { checkAuth, gatepassAuth } = require("./src/middlewares/checkToken");
+const { checkAuth, gatepassAuth, requireLogin } = require("./src/middlewares/checkToken");
 
 const { authRouter, requestRouter } = require("./src/routes/");
 
@@ -24,6 +24,7 @@ app.use(cors());
 
 app.use(checkAuth);
 app.use(gatepassAuth);
+app.use(requireLogin);
 
 app.get("/", (req, res) => {
 	res.status(200).json({
