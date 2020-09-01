@@ -93,16 +93,43 @@ exports.verifyUser = async (req, res, next) => {
 };
 
 exports.loginUser = async (req, res, next) => {
-	const { email, password } = req.body;
-	const { app_name } = req.app;
+	const { email, username, password } = req.body;
+	const { app_name, unique_id } = req.app;
 	let err;
 	try {
-		const user = await User.findOne({ email, app_name });
+		let user;
+
+		if (!email && unique_id == "email") {
+			err = new ErrorHelper(
+				422,
+				"fail",
+				"You are required to login with your email"
+			);
+			return next(err, req, res, next);
+		}
+
+		if (!username && unique_id == "username") {
+			err = new ErrorHelper(
+				422,
+				"fail",
+				"You are required to login with your username"
+			);
+			return next(err, req, res, next);
+		}
+
+		if (unique_id == "email") {
+			user = await User.findOne({ email, app_name });
+		}
+
+		if (unique_id == "username") {
+			user = await User.findOne({ username, app_name });
+		}
+
 		if (!user) {
 			err = new ErrorHelper(
 				404,
 				"fail",
-				"You Entered an incorrect Email or Password"
+				"You have entered an incorrect email/username or Password "
 			);
 			return next(err, req, res, next);
 		}
@@ -133,7 +160,10 @@ exports.loginUser = async (req, res, next) => {
 		await User.findByIdAndUpdate(user._id, {
 			$set: { last_login: new Date().toDateString() },
 		});
-		const token = generateToken({ userId: user._id, app_name: user.app_name }, "1d");
+		const token = generateToken(
+			{ userId: user._id, app_name: user.app_name },
+			"1d"
+		);
 		return res.status(200).json({
 			message: `You have successfully logged in on ${app_name}..`,
 			token,
@@ -169,7 +199,7 @@ exports.forgotPassword = async (req, res, next) => {
 		await passwordResetMail(user, req);
 
 		return res.status(200).json({
-			message: `A password reset link has been sent to your email. You'd get it if you entered a correct email.`,
+			message: `A password reset link has been sent to your email. You would get it if you had entered a correct email.`,
 		});
 	} catch (error) {
 		console.log(`Error from user forgot password >>> ${error.message}`);
@@ -252,6 +282,32 @@ exports.changePassword = async (req, res, next) => {
 		});
 	} catch (error) {
 		console.log(red(`Error from user change password >>> ${error.message}`));
+		return next(error);
+	}
+};
+
+exports.tokenVerification = async (req, res, next) => {
+	const user = req.user;
+	const { app_name } = req.app;
+	try {
+		if (!user) {
+			return res.status(401).json({
+				message: "Missing credentials",
+			});
+		}
+		//check if the decoded token contains a valid user -- verify the token
+		const validUser = await User.findOne({ _id: user._id, app_name: app_name });
+
+		if (!validUser) {
+			return res.status(403).json({
+				valid_token: false,
+			});
+		}
+		return res.status(200).json({
+			valid_token: true,
+		});
+	} catch (error) {
+		console.log(red(`Error from token verification >>> ${error.message}`));
 		return next(error);
 	}
 };
