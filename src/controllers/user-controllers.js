@@ -16,7 +16,7 @@ exports.getAllUsersDetails = async (req, res, next) => {
 					organisation_name: orgname,
 					status: "active",
 				})
-					.select("-__v -password -createdAt -updatedAt ")
+					.select("-__v -password -createdAt -updatedAt -unique_id -app_name ")
 					.limit(limit * 1)
 					.skip((page - 1) * 1)
 					.exec();
@@ -31,7 +31,7 @@ exports.getAllUsersDetails = async (req, res, next) => {
 					organisation_name: orgname,
 					status: "disabled",
 				})
-					.select("-__v -password -createdAt -updatedAt ")
+					.select("-__v -password -createdAt -updatedAt -unique_id -app_name ")
 					.limit(limit * 1)
 					.skip((page - 1) * 1)
 					.exec();
@@ -46,7 +46,7 @@ exports.getAllUsersDetails = async (req, res, next) => {
 				app_name: appName,
 				organisation_name: orgname,
 			})
-				.select("-__v -password -createdAt -updatedAt ")
+				.select("-__v -password -createdAt -updatedAt -unique_id -app_name ")
 				.limit(limit * 1)
 				.skip((page - 1) * limit)
 				.exec();
@@ -86,7 +86,7 @@ exports.getSingleUserDetails = async (req, res, next) => {
 			app_name: appName,
 			organisation_name: orgname,
 			email: email,
-		}).select("-__v -password -createdAt -updatedAt");
+		}).select("-__v -password -createdAt -updatedAt -unique_id -app_name");
 
 		if (!user) {
 			err = new ErrorHelper(

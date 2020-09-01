@@ -7,6 +7,7 @@ const {
 	forgotPassword,
 	resetPassword,
 	changePassword,
+	tokenVerification,
 } = require("../controllers/auth-controllers");
 
 const {
@@ -36,5 +37,6 @@ router.post(
 	validateError,
 	changePassword
 );
+router.get("/verification", tokenVerification);
 
 module.exports = router;

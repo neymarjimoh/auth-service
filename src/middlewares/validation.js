@@ -42,7 +42,11 @@ const signUpValidationRules = () => {
 
 const signInValidationRules = () => {
 	return [
-		body("email").isEmail().withMessage("Enter a valid email"),
+		body("email").optional().isEmail().withMessage("Enter a valid email"),
+		body("username")
+			.optional()
+			.isLength({ min: 5 })
+			.withMessage("Enter a valid username"),
 		body("password")
 			.notEmpty()
 			.isLength({ min: 6 })
@@ -73,7 +77,7 @@ const changePasswordValRules = () => {
 		body("confirmPassword", "passwords do not match")
 			.exists()
 			.custom((val, { req }) => val === req.body.newPassword),
-	]
+	];
 };
 
 const validateError = (req, res, next) => {
